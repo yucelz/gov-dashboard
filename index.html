@@ -27,6 +27,23 @@ a{color:#9184d9}a:hover{color:#b5abfc}
 .tag,.btn,button{white-space:nowrap}
 .num{font-variant-numeric:tabular-nums}
 .drow:hover{background:rgba(233,233,237,.04)}
+
+/* --- Mobile responsiveness (overrides inline grid styles) --- */
+@media (max-width: 900px){
+  [style*="grid-template-columns"]{grid-template-columns:minmax(0,1fr) !important}
+  [style*="grid-template-columns:repeat(4"]{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
+  aside{border-right:none !important;border-bottom:1px solid rgba(233,233,237,.12)}
+  aside nav{flex-direction:row !important;flex-wrap:wrap;gap:4px !important}
+  main{padding:20px 14px 28px !important}
+  section[style*="padding:52px 60px"],section[style*="padding:34px 60px"],section[style*="padding:46px 60px"]{padding:28px 18px !important}
+  .tbl,table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  [style*="position:fixed"][style*="top:14px"]{position:sticky !important;top:0 !important;right:auto !important;margin:0;border-radius:0 !important;justify-content:center;flex-wrap:wrap}
+  aside nav > div:not(.navitem):not(.navon){flex-basis:100%}
+}
+@media (max-width: 520px){
+  [style*="grid-template-columns:repeat(4"]{grid-template-columns:minmax(0,1fr) !important}
+  h1,[style*="font-size:3"]{font-size:24px !important}
+}
 </style>
 </helmet>
 
