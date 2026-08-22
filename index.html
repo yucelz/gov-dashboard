@@ -189,25 +189,25 @@ a{color:#9184d9}a:hover{color:#b5abfc}
           <h4 style="margin:0;font-size:16px">{{ t.minTitle }}</h4>
           <span style="font-size:11.5px;color:rgba(233,233,237,.45)">{{ t.minHint }}</span>
         </div>
-        <table class="table" style="font-size:13px">
-          <thead><tr><th style="padding-left:14px">{{ t.thMinistry }}</th><th style="text-align:right">{{ t.thAlloc }}</th><th style="text-align:right">{{ t.thSpent }}</th><th style="width:150px">{{ t.thProgress }}</th><th style="padding-right:14px">{{ t.thPace }}</th></tr></thead>
-          <tbody>
+        <sc-raw-table class="table" style="font-size:13px">
+          <sc-raw-thead><sc-raw-tr><sc-raw-th style="padding-left:14px">{{ t.thMinistry }}</sc-raw-th><sc-raw-th style="text-align:right">{{ t.thAlloc }}</sc-raw-th><sc-raw-th style="text-align:right">{{ t.thSpent }}</sc-raw-th><sc-raw-th style="width:150px">{{ t.thProgress }}</sc-raw-th><sc-raw-th style="padding-right:14px">{{ t.thPace }}</sc-raw-th></sc-raw-tr></sc-raw-thead>
+          <sc-raw-tbody>
             <sc-for list="{{ ministries }}" as="m" hint-placeholder-count="9">
-              <tr onClick="{{ m.open }}" style="cursor:pointer">
-                <td style="padding-left:14px">{{ m.name }}</td>
-                <td class="num" style="text-align:right">{{ m.alloc }}</td>
-                <td class="num" style="text-align:right">{{ m.spent }}</td>
-                <td>
+              <sc-raw-tr onClick="{{ m.open }}" style="cursor:pointer">
+                <sc-raw-td style="padding-left:14px">{{ m.name }}</sc-raw-td>
+                <sc-raw-td class="num" style="text-align:right">{{ m.alloc }}</sc-raw-td>
+                <sc-raw-td class="num" style="text-align:right">{{ m.spent }}</sc-raw-td>
+                <sc-raw-td>
                   <div style="display:flex;align-items:center;gap:8px">
                     <div class="bar" style="flex:1"><div style="width:{{ m.pct }};height:100%;background:{{ m.color }}"></div></div>
                     <span class="num" style="width:38px;font-size:11.5px;color:rgba(233,233,237,.6)">{{ m.pct }}</span>
                   </div>
-                </td>
-                <td style="padding-right:14px"><span class="tag {{ m.tag }}">{{ m.pace }}</span></td>
-              </tr>
+                </sc-raw-td>
+                <sc-raw-td style="padding-right:14px"><span class="tag {{ m.tag }}">{{ m.pace }}</span></sc-raw-td>
+              </sc-raw-tr>
             </sc-for>
-          </tbody>
-        </table>
+          </sc-raw-tbody>
+        </sc-raw-table>
       </div>
 
       <div class="pnl" style="display:flex;flex-direction:column;gap:12px">
@@ -365,25 +365,25 @@ a{color:#9184d9}a:hover{color:#b5abfc}
           <h4 style="margin:0;font-size:16px">{{ t.surpriseTitle }}</h4>
           <div style="font-size:11.5px;color:rgba(233,233,237,.5);margin-top:2px">{{ t.surpriseHint }}</div>
         </div>
-        <table class="table" style="font-size:13px;margin-top:6px">
-          <thead><tr><th style="padding-left:14px">{{ t.thEvent }}</th><th>{{ t.thWhen }}</th><th style="text-align:right">{{ t.thCost }}</th><th style="width:130px">{{ t.thRepeat }}</th><th style="text-align:right;padding-right:14px">{{ t.thAdded }}</th></tr></thead>
-          <tbody>
+        <sc-raw-table class="table" style="font-size:13px;margin-top:6px">
+          <sc-raw-thead><sc-raw-tr><sc-raw-th style="padding-left:14px">{{ t.thEvent }}</sc-raw-th><sc-raw-th>{{ t.thWhen }}</sc-raw-th><sc-raw-th style="text-align:right">{{ t.thCost }}</sc-raw-th><sc-raw-th style="width:130px">{{ t.thRepeat }}</sc-raw-th><sc-raw-th style="text-align:right;padding-right:14px">{{ t.thAdded }}</sc-raw-th></sc-raw-tr></sc-raw-thead>
+          <sc-raw-tbody>
             <sc-for list="{{ surprises }}" as="s" hint-placeholder-count="5">
-              <tr>
-                <td style="padding-left:14px">{{ s.name }}</td>
-                <td class="mut" style="font-size:12px">{{ s.when }}</td>
-                <td class="num" style="text-align:right">{{ s.cost }}</td>
-                <td>
+              <sc-raw-tr>
+                <sc-raw-td style="padding-left:14px">{{ s.name }}</sc-raw-td>
+                <sc-raw-td class="mut" style="font-size:12px">{{ s.when }}</sc-raw-td>
+                <sc-raw-td class="num" style="text-align:right">{{ s.cost }}</sc-raw-td>
+                <sc-raw-td>
                   <div style="display:flex;align-items:center;gap:8px">
                     <div class="bar" style="flex:1;height:4px"><div style="width:{{ s.chance }};height:100%;background:#9184d9"></div></div>
                     <span class="num" style="width:32px;font-size:11px;color:rgba(233,233,237,.6)">{{ s.chance }}</span>
                   </div>
-                </td>
-                <td class="num" style="text-align:right;padding-right:14px;color:#d2cefd">{{ s.added }}</td>
-              </tr>
+                </sc-raw-td>
+                <sc-raw-td class="num" style="text-align:right;padding-right:14px;color:#d2cefd">{{ s.added }}</sc-raw-td>
+              </sc-raw-tr>
             </sc-for>
-          </tbody>
-        </table>
+          </sc-raw-tbody>
+        </sc-raw-table>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:14px">
@@ -452,20 +452,20 @@ a{color:#9184d9}a:hover{color:#b5abfc}
     <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
       <div style="padding:16px 4px 8px;border-radius:8px;background:#232532;box-shadow:0 0 0 1px #3f424d">
         <h4 style="margin:0 0 4px;padding:0 14px;font-size:16px">{{ t.progTitle }}</h4>
-        <table class="table" style="font-size:13px">
-          <thead><tr><th style="padding-left:14px">{{ t.thProgram }}</th><th style="text-align:right">{{ t.thAlloc }}</th><th style="text-align:right">{{ t.thSpent }}</th><th style="width:140px">{{ t.thProgress }}</th><th style="padding-right:14px">{{ t.thNote }}</th></tr></thead>
-          <tbody>
+        <sc-raw-table class="table" style="font-size:13px">
+          <sc-raw-thead><sc-raw-tr><sc-raw-th style="padding-left:14px">{{ t.thProgram }}</sc-raw-th><sc-raw-th style="text-align:right">{{ t.thAlloc }}</sc-raw-th><sc-raw-th style="text-align:right">{{ t.thSpent }}</sc-raw-th><sc-raw-th style="width:140px">{{ t.thProgress }}</sc-raw-th><sc-raw-th style="padding-right:14px">{{ t.thNote }}</sc-raw-th></sc-raw-tr></sc-raw-thead>
+          <sc-raw-tbody>
             <sc-for list="{{ m.programs }}" as="p" hint-placeholder-count="4">
-              <tr>
-                <td style="padding-left:14px">{{ p.name }}</td>
-                <td class="num" style="text-align:right">{{ p.alloc }}</td>
-                <td class="num" style="text-align:right">{{ p.spent }}</td>
-                <td><div style="display:flex;align-items:center;gap:8px"><div class="bar" style="flex:1"><div style="width:{{ p.pct }};height:100%;background:#9184d9"></div></div><span class="num" style="width:38px;font-size:11.5px;color:rgba(233,233,237,.6)">{{ p.pct }}</span></div></td>
-                <td style="padding-right:14px;font-size:11.5px;color:rgba(233,233,237,.55)">{{ p.note }}</td>
-              </tr>
+              <sc-raw-tr>
+                <sc-raw-td style="padding-left:14px">{{ p.name }}</sc-raw-td>
+                <sc-raw-td class="num" style="text-align:right">{{ p.alloc }}</sc-raw-td>
+                <sc-raw-td class="num" style="text-align:right">{{ p.spent }}</sc-raw-td>
+                <sc-raw-td><div style="display:flex;align-items:center;gap:8px"><div class="bar" style="flex:1"><div style="width:{{ p.pct }};height:100%;background:#9184d9"></div></div><span class="num" style="width:38px;font-size:11.5px;color:rgba(233,233,237,.6)">{{ p.pct }}</span></div></sc-raw-td>
+                <sc-raw-td style="padding-right:14px;font-size:11.5px;color:rgba(233,233,237,.55)">{{ p.note }}</sc-raw-td>
+              </sc-raw-tr>
             </sc-for>
-          </tbody>
-        </table>
+          </sc-raw-tbody>
+        </sc-raw-table>
       </div>
 
       <div class="pnl" style="padding-bottom:10px">
