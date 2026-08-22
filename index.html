@@ -1,28 +1,904 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gov Dashboard</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+<meta charset="utf-8">
+<title>MoF Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
 </head>
 <body>
-  <header>
-    <h1>Gov Dashboard</h1>
-    <p>Public government data, at a glance.</p>
-  </header>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-ff95c0fb-b49f-4701-9118-b9b18e61d370/styles.css">
+<script src="_ds/nocturne-ff95c0fb-b49f-4701-9118-b9b18e61d370/_ds_bundle.js"></script>
+<style>
+body{margin:0;background:#161826;color:#e9e9ed;font-family:"Inter",system-ui,sans-serif}
+a{color:#9184d9}a:hover{color:#b5abfc}
+.navitem{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:6px;font-size:13px;color:rgba(233,233,237,.72);cursor:pointer}
+.navitem:hover{background:rgba(233,233,237,.06)}
+.navdot{width:5px;height:5px;border-radius:50%;background:rgba(233,233,237,.3)}
+.navon{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:6px;background:rgba(145,132,217,.14);box-shadow:inset 0 0 0 1px rgba(145,132,217,.35);font-size:13px;color:#d2cefd;cursor:pointer}
+.pnl{padding:16px 18px;border-radius:8px;background:#232532;box-shadow:0 0 0 1px #3f424d}
+.kpi{padding:14px 15px;border-radius:8px;background:#232532;box-shadow:0 0 0 1px #3f424d;display:flex;flex-direction:column;gap:8px}
+.klbl{font-size:11px;color:rgba(233,233,237,.6)}
+.ksub{font-size:11.5px;color:rgba(233,233,237,.55)}
+.bar{height:5px;border-radius:3px;background:rgba(233,233,237,.1);overflow:hidden}
+.mut{color:rgba(233,233,237,.55);white-space:nowrap}
+.tag,.btn,button{white-space:nowrap}
+.num{font-variant-numeric:tabular-nums}
+.drow:hover{background:rgba(233,233,237,.04)}
+</style>
+</helmet>
 
-  <main id="app">
-    <section class="card">
-      <h2>Status</h2>
-      <p id="status">Loading…</p>
+<div style="min-height:100vh;background:#161826">
+
+<div style="position:fixed;top:14px;right:16px;z-index:50;display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;background:rgba(35,37,50,.94);box-shadow:0 0 0 1px #3f424d,0 6px 18px rgba(0,0,0,.55);backdrop-filter:blur(6px)">
+  <button onClick="{{ pickA }}" style="cursor:pointer;font:500 12px/1.2 Inter,sans-serif;padding:6px 10px;border-radius:6px;border:1px solid {{ aBorder }};background:{{ aBg }};color:{{ aFg }}">A · {{ t.dirA }}</button>
+  <button onClick="{{ pickB }}" style="cursor:pointer;font:500 12px/1.2 Inter,sans-serif;padding:6px 10px;border-radius:6px;border:1px solid {{ bBorder }};background:{{ bBg }};color:{{ bFg }}">B · {{ t.dirB }}</button>
+  <span style="width:1px;height:20px;background:rgba(233,233,237,.16)"></span>
+  <button onClick="{{ setEn }}" style="cursor:pointer;font:500 12px/1.2 Inter,sans-serif;padding:6px 9px;border-radius:6px;border:1px solid {{ enBorder }};background:{{ enBg }};color:{{ enFg }}">EN</button>
+  <button onClick="{{ setTr }}" style="cursor:pointer;font:500 12px/1.2 Inter,sans-serif;padding:6px 9px;border-radius:6px;border:1px solid {{ trBorder }};background:{{ trBg }};color:{{ trFg }}">TR</button>
+</div>
+
+<!-- ══════════ A · OVERVIEW ══════════ -->
+<sc-if value="{{ aOverview }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:224px minmax(0,1fr);min-height:100vh">
+
+  <aside style="border-right:1px solid rgba(233,233,237,.12);padding:20px 0;display:flex;flex-direction:column;gap:22px;background:#191b2a">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 18px">
+      <div style="width:30px;height:30px;flex:none;border-radius:7px;background:#262a60;box-shadow:inset 0 0 0 1px #4c5397;display:grid;place-items:center;font:600 12px Inter,sans-serif;color:#d2cefd">KK</div>
+      <div>
+        <div style="font:500 13px/1.15 Inter,sans-serif">{{ t.brand }}</div>
+        <div style="font-size:10.5px;color:rgba(233,233,237,.45)">{{ t.country }}</div>
+      </div>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:2px;padding:0 10px">
+      <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.35);padding:6px 8px">{{ t.navFiscal }}</div>
+      <div class="navon"><span style="width:5px;height:5px;border-radius:50%;background:#9184d9"></span>{{ t.navOverview }}</div>
+      <div class="navitem" onClick="{{ goExec }}"><span class="navdot"></span>{{ t.navExec }}</div>
+      <div class="navitem"><span class="navdot"></span>{{ t.navRevenue }}</div>
+      <div class="navitem"><span class="navdot"></span>{{ t.navDebt }}</div>
+      <div class="navitem"><span class="navdot"></span>{{ t.navCash }}</div>
+      <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.35);padding:14px 8px 6px">{{ t.navEconomy }}</div>
+      <div class="navitem"><span class="navdot"></span>{{ t.navMacro }}</div>
+      <div class="navitem"><span class="navdot"></span>{{ t.navReports }}</div>
+    </nav>
+    <div style="margin-top:auto;padding:0 14px">
+      <div style="padding:12px;border-radius:8px;background:#232532;box-shadow:0 0 0 1px #3f424d">
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#9184d9;margin-bottom:6px">{{ t.dataAsOf }}</div>
+        <div style="font:500 14px Inter,sans-serif">{{ asOf }}</div>
+        <div style="font-size:11px;color:rgba(233,233,237,.45);margin-top:3px">{{ t.ledgerSync }}</div>
+      </div>
+    </div>
+  </aside>
+
+  <main style="padding:66px 26px 34px;display:flex;flex-direction:column;gap:16px;min-width:0">
+    <header style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:rgba(233,233,237,.5)">{{ fyLine }}</div>
+        <h2 style="margin:4px 0 0;font-size:29px">{{ t.overviewTitle }}</h2>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <div class="seg" style="border-color:rgba(233,233,237,.16);flex:none;white-space:nowrap">
+          <label class="seg-opt" style="box-shadow:inset 0 0 0 1px #9184d9;color:#9184d9">{{ t.segYtd }}</label>
+          <label class="seg-opt">{{ t.segQuarter }}</label>
+          <label class="seg-opt">{{ t.segMonth }}</label>
+        </div>
+        <button class="btn btn-secondary">{{ t.exportBriefing }}</button>
+      </div>
+    </header>
+
+    <section style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+      <div class="kpi">
+        <div class="klbl">{{ t.kpiSpend }}</div>
+        <div style="display:flex;align-items:baseline;gap:6px"><span style="font:500 26px/1 Inter,sans-serif">58.1</span><span style="font-size:12px" class="mut">{{ t.bn }}</span></div>
+        <div class="ksub">{{ t.kpiSpendSub }}</div>
+        <div class="bar" style="height:4px"><div style="width:62.9%;height:100%;background:#9184d9"></div></div>
+      </div>
+      <div class="kpi">
+        <div class="klbl">{{ t.kpiRev }}</div>
+        <div style="display:flex;align-items:baseline;gap:6px"><span style="font:500 26px/1 Inter,sans-serif">51.3</span><span style="font-size:12px" class="mut">{{ t.bn }}</span></div>
+        <div class="ksub">{{ t.kpiRevSub }}</div>
+        <div class="bar" style="height:4px"><div style="width:65.3%;height:100%;background:#b5abfc"></div></div>
+      </div>
+      <div class="kpi">
+        <div class="klbl">{{ t.kpiDef }}</div>
+        <div style="display:flex;align-items:baseline;gap:6px"><span style="font:500 26px/1 Inter,sans-serif">6.8</span><span style="font-size:12px" class="mut">{{ t.bn }}</span></div>
+        <div class="ksub">{{ t.kpiDefSub }}</div>
+        <svg viewBox="0 0 120 26" style="width:100%;height:26px"><polyline points="2,20 18,17 34,19 50,14 66,15 82,11 98,12 116,8" fill="none" stroke="#9184d9" stroke-width="1.6"></polyline></svg>
+      </div>
+      <div class="kpi">
+        <div class="klbl">{{ t.kpiCash }}</div>
+        <div style="display:flex;align-items:baseline;gap:6px"><span style="font:500 26px/1 Inter,sans-serif">4.9</span><span style="font-size:12px" class="mut">{{ t.bn }}</span></div>
+        <div class="ksub">{{ t.kpiCashSub }}</div>
+        <svg viewBox="0 0 120 26" style="width:100%;height:26px"><polyline points="2,10 18,13 34,9 50,15 66,12 82,18 98,14 116,17" fill="none" stroke="#b5abfc" stroke-width="1.6"></polyline></svg>
+      </div>
+    </section>
+
+    <section style="display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:14px">
+      <div class="pnl" style="padding-bottom:10px">
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:12px">
+          <h4 style="margin:0;font-size:16px">{{ t.chartTitle }}</h4>
+          <div style="display:flex;gap:14px;margin-left:auto;font-size:11px;color:rgba(233,233,237,.6)">
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:2px;background:#9184d9"></span>{{ t.legSpend }}</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:2px;background:#b5abfc"></span>{{ t.legRev }}</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:0;border-top:1px dashed rgba(233,233,237,.45)"></span>{{ t.legPlan }}</span>
+          </div>
+        </div>
+        <svg viewBox="0 0 700 210" style="width:100%;height:auto">
+          <g stroke="rgba(233,233,237,.08)"><line x1="0" y1="180" x2="700" y2="180"></line><line x1="0" y1="140" x2="700" y2="140"></line><line x1="0" y1="100" x2="700" y2="100"></line><line x1="0" y1="60" x2="700" y2="60"></line><line x1="0" y1="20" x2="700" y2="20"></line></g>
+          <g fill="#5d5294">
+            <rect x="26" y="70" width="30" height="110" rx="2"></rect><rect x="110" y="59" width="30" height="121" rx="2"></rect><rect x="194" y="54" width="30" height="126" rx="2"></rect><rect x="278" y="48" width="30" height="132" rx="2"></rect><rect x="362" y="56" width="30" height="124" rx="2"></rect><rect x="446" y="45" width="30" height="135" rx="2"></rect><rect x="530" y="36" width="30" height="144" rx="2"></rect><rect x="614" y="40" width="30" height="140" rx="2"></rect>
+          </g>
+          <line x1="0" y1="137" x2="700" y2="137" stroke="rgba(233,233,237,.45)" stroke-dasharray="4 4"></line>
+          <polyline points="41,73 125,72 209,63 293,66 377,57 461,68 545,52 629,59" fill="none" stroke="#b5abfc" stroke-width="2"></polyline>
+          <g fill="#b5abfc"><circle cx="41" cy="73" r="2.6"></circle><circle cx="125" cy="72" r="2.6"></circle><circle cx="209" cy="63" r="2.6"></circle><circle cx="293" cy="66" r="2.6"></circle><circle cx="377" cy="57" r="2.6"></circle><circle cx="461" cy="68" r="2.6"></circle><circle cx="545" cy="52" r="2.6"></circle><circle cx="629" cy="59" r="2.6"></circle></g>
+          <g fill="rgba(233,233,237,.5)" font-size="11" font-family="Inter,sans-serif" text-anchor="middle">
+            <text x="41" y="198">{{ mo.0 }}</text><text x="125" y="198">{{ mo.1 }}</text><text x="209" y="198">{{ mo.2 }}</text><text x="293" y="198">{{ mo.3 }}</text><text x="377" y="198">{{ mo.4 }}</text><text x="461" y="198">{{ mo.5 }}</text><text x="545" y="198">{{ mo.6 }}</text><text x="629" y="198">{{ mo.7 }}</text>
+          </g>
+        </svg>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+        <div class="pnl">
+          <h4 style="margin:0 0 12px;font-size:16px">{{ t.revTitle }}</h4>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <sc-for list="{{ revenue }}" as="r" hint-placeholder-count="5">
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <div style="display:flex;align-items:baseline;gap:8px;font-size:12.5px">
+                  <span>{{ r.name }}</span>
+                  <span class="mut" style="margin-left:auto">{{ r.pair }}</span>
+                </div>
+                <div class="bar" style="height:6px"><div style="width:{{ r.pct }};height:100%;background:{{ r.color }}"></div></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div class="pnl" style="display:flex;flex-direction:column;gap:11px">
+          <h4 style="margin:0;font-size:16px">{{ t.econTitle }}</h4>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 10px">
+            <div><div class="klbl">{{ t.econInf }}</div><div style="font:500 19px/1.2 Inter,sans-serif">21.4%</div></div>
+            <div><div class="klbl">{{ t.econGdp }}</div><div style="font:500 19px/1.2 Inter,sans-serif">3.1%</div></div>
+            <div><div class="klbl">{{ t.econFx }}</div><div style="font:500 19px/1.2 Inter,sans-serif">41.20</div></div>
+            <div><div class="klbl">{{ t.econDebt }}</div><div style="font:500 19px/1.2 Inter,sans-serif">44.8%</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:14px;align-items:start">
+      <div style="padding:16px 4px 8px;border-radius:8px;background:#232532;box-shadow:0 0 0 1px #3f424d">
+        <div style="display:flex;align-items:baseline;gap:10px;padding:0 14px 4px">
+          <h4 style="margin:0;font-size:16px">{{ t.minTitle }}</h4>
+          <span style="font-size:11.5px;color:rgba(233,233,237,.45)">{{ t.minHint }}</span>
+        </div>
+        <table class="table" style="font-size:13px">
+          <thead><tr><th style="padding-left:14px">{{ t.thMinistry }}</th><th style="text-align:right">{{ t.thAlloc }}</th><th style="text-align:right">{{ t.thSpent }}</th><th style="width:150px">{{ t.thProgress }}</th><th style="padding-right:14px">{{ t.thPace }}</th></tr></thead>
+          <tbody>
+            <sc-for list="{{ ministries }}" as="m" hint-placeholder-count="9">
+              <tr onClick="{{ m.open }}" style="cursor:pointer">
+                <td style="padding-left:14px">{{ m.name }}</td>
+                <td class="num" style="text-align:right">{{ m.alloc }}</td>
+                <td class="num" style="text-align:right">{{ m.spent }}</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div class="bar" style="flex:1"><div style="width:{{ m.pct }};height:100%;background:{{ m.color }}"></div></div>
+                    <span class="num" style="width:38px;font-size:11.5px;color:rgba(233,233,237,.6)">{{ m.pct }}</span>
+                  </div>
+                </td>
+                <td style="padding-right:14px"><span class="tag {{ m.tag }}">{{ m.pace }}</span></td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pnl" style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:baseline;gap:8px"><h4 style="margin:0;font-size:16px">{{ t.alertsTitle }}</h4><span class="tag tag-outline" style="margin-left:auto">{{ t.alertsOpen }}</span></div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ alerts }}" as="al" hint-placeholder-count="4">
+            <div style="padding-left:11px;border-left:2px solid {{ al.color }}">
+              <div style="font-size:13px;font-weight:500">{{ al.title }}</div>
+              <div style="font-size:11.5px;color:rgba(233,233,237,.55);margin-top:2px">{{ al.body }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
     </section>
   </main>
+</div>
+</sc-if>
 
-  <footer>
-    <p>Hosted on GitHub Pages.</p>
-  </footer>
+<!-- ══════════ A · BUDGET EXECUTION + FORECAST ══════════ -->
+<sc-if value="{{ aExec }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:224px minmax(0,1fr);min-height:100vh">
 
-  <script src="assets/js/main.js"></script>
+  <aside style="border-right:1px solid rgba(233,233,237,.12);padding:20px 0;display:flex;flex-direction:column;gap:22px;background:#191b2a">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 18px">
+      <div style="width:30px;height:30px;flex:none;border-radius:7px;background:#262a60;box-shadow:inset 0 0 0 1px #4c5397;display:grid;place-items:center;font:600 12px Inter,sans-serif;color:#d2cefd">KK</div>
+      <div>
+        <div style="font:500 13px/1.15 Inter,sans-serif">{{ t.brand }}</div>
+        <div style="font-size:10.5px;color:rgba(233,233,237,.45)">{{ t.country }}</div>
+      </div>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:2px;padding:0 10px">
+      <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.35);padding:6px 8px">{{ t.navFiscal }}</div>
+      <div class="navitem" onClick="{{ back }}"><span class="navdot"></span>{{ t.navOverview }}</div>
+      <div class="navon"><span style="width:5px;height:5px;border-radius:50%;background:#9184d9"></span>{{ t.navExec }}</div>
+      <div class="navitem"><span class="navdot"></span>{{ t.navRevenue }}</div>
+      <div class="navitem"><span class="navdot"></span>{{ t.navDebt }}</div>
+      <div class="navitem"><span class="navdot"></span>{{ t.navCash }}</div>
+      <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(233,233,237,.35);padding:14px 8px 6px">{{ t.navEconomy }}</div>
+      <div class="navitem"><span class="navdot"></span>{{ t.navMacro }}</div>
+      <div class="navitem"><span class="navdot"></span>{{ t.navReports }}</div>
+    </nav>
+    <div style="margin-top:auto;padding:0 14px">
+      <div style="padding:12px;border-radius:8px;background:#232532;box-shadow:0 0 0 1px #3f424d">
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#9184d9;margin-bottom:6px">{{ t.modelRun }}</div>
+        <div style="font:500 14px Inter,sans-serif">{{ modelRunAt }}</div>
+        <div style="font-size:11px;color:rgba(233,233,237,.45);margin-top:3px">{{ t.modelHist }}</div>
+      </div>
+    </div>
+  </aside>
+
+  <main style="padding:66px 26px 34px;display:flex;flex-direction:column;gap:14px;min-width:0">
+    <header style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+      <div>
+        <div style="display:flex;align-items:center;gap:9px">
+          <span style="font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:rgba(233,233,237,.5)">{{ execKicker }}</span>
+          <span class="tag tag-outline">{{ t.execBadge }}</span>
+        </div>
+        <h2 style="margin:5px 0 0;font-size:29px">{{ t.execTitle }}</h2>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <div class="seg" style="border-color:rgba(233,233,237,.16);flex:none;white-space:nowrap">
+          <label class="seg-opt" style="box-shadow:inset 0 0 0 1px #9184d9;color:#9184d9">{{ t.segNext }}</label>
+          <label class="seg-opt">{{ t.seg3 }}</label>
+          <label class="seg-opt">{{ t.segYear }}</label>
+        </div>
+        <button class="btn btn-secondary">{{ t.rerun }}</button>
+      </div>
+    </header>
+
+    <section style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+      <div class="kpi">
+        <div class="klbl">{{ t.cExec }}</div>
+        <div style="display:flex;align-items:flex-end;gap:8px">
+          <div style="display:flex;align-items:baseline;gap:5px"><span style="font:500 25px/1 Inter,sans-serif">58.1</span><span style="font-size:12px" class="mut">{{ t.bn }}</span></div>
+          <svg viewBox="0 0 78 26" style="width:78px;height:26px;margin-left:auto"><g fill="#5d5294"><rect x="0" y="12" width="9" height="14" rx="1.5"></rect><rect x="13" y="9" width="9" height="17" rx="1.5"></rect><rect x="26" y="10" width="9" height="16" rx="1.5"></rect><rect x="39" y="6" width="9" height="20" rx="1.5"></rect><rect x="52" y="4" width="9" height="22" rx="1.5"></rect><rect x="65" y="5" width="9" height="21" rx="1.5"></rect></g></svg>
+        </div>
+        <div class="ksub">{{ t.kpiSpendSub }}</div>
+      </div>
+      <div class="kpi">
+        <div class="klbl">{{ t.cNext }}</div>
+        <div style="display:flex;align-items:flex-end;gap:8px">
+          <div style="display:flex;align-items:baseline;gap:5px"><span style="font:500 25px/1 Inter,sans-serif;color:#d2cefd">7.9</span><span style="font-size:12px" class="mut">{{ t.bn }}</span></div>
+          <svg viewBox="0 0 78 26" style="width:78px;height:26px;margin-left:auto"><g fill="none" stroke="#9184d9" stroke-width="1.2"><rect x="0.6" y="11" width="9" height="14" rx="1.5"></rect><rect x="13.6" y="9" width="9" height="16" rx="1.5"></rect><rect x="26.6" y="7" width="9" height="18" rx="1.5"></rect><rect x="39.6" y="6" width="9" height="19" rx="1.5"></rect><rect x="52.6" y="4" width="9" height="21" rx="1.5"></rect><rect x="65.6" y="2" width="9" height="23" rx="1.5"></rect></g></svg>
+        </div>
+        <div class="ksub">{{ t.rangeNext }}</div>
+      </div>
+      <div class="kpi">
+        <div class="klbl">{{ t.c3 }}</div>
+        <div style="display:flex;align-items:baseline;gap:5px"><span style="font:500 25px/1 Inter,sans-serif;color:#d2cefd">24.7</span><span style="font-size:12px" class="mut">{{ t.bn }}</span></div>
+        <div class="ksub">{{ t.range3 }}</div>
+        <svg viewBox="0 0 120 22" style="width:100%;height:22px">
+          <polygon points="2,15 40,12 78,9 116,5 116,14 78,17 40,19 2,20" fill="rgba(145,132,217,.22)"></polygon>
+          <polyline points="2,17 40,15 78,13 116,9" fill="none" stroke="#9184d9" stroke-width="1.6" stroke-dasharray="3 3"></polyline>
+        </svg>
+      </div>
+      <div class="kpi">
+        <div class="klbl">{{ t.cYear }}</div>
+        <div style="display:flex;align-items:baseline;gap:5px"><span style="font:500 25px/1 Inter,sans-serif;color:#d2cefd">91.7</span><span style="font-size:12px" class="mut">{{ t.bn }}</span></div>
+        <div class="ksub">{{ t.yearSub }}</div>
+        <div class="bar" style="height:4px"><div style="width:99.2%;height:100%;background:linear-gradient(to right,#9184d9 63%,#5d5294 63%)"></div></div>
+      </div>
+    </section>
+
+    <section style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;align-items:start">
+      <div class="pnl" style="padding-bottom:10px">
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:12px;flex-wrap:wrap">
+          <h4 style="margin:0;font-size:16px">{{ t.projTitle }}</h4>
+          <div style="display:flex;gap:14px;margin-left:auto;font-size:11px;color:rgba(233,233,237,.6)">
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:2px;background:#5d5294"></span>{{ t.projActual }}</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:2px;border:1px solid #9184d9"></span>{{ t.projForecast }}</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:9px;background:rgba(145,132,217,.22)"></span>{{ t.projBand }}</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:0;border-top:1px dashed rgba(233,233,237,.45)"></span>{{ t.projPace }}</span>
+          </div>
+        </div>
+        <svg viewBox="0 0 760 210" style="width:100%;height:auto">
+          <g stroke="rgba(233,233,237,.08)"><line x1="0" y1="175" x2="760" y2="175"></line><line x1="0" y1="137" x2="760" y2="137"></line><line x1="0" y1="99" x2="760" y2="99"></line><line x1="0" y1="61" x2="760" y2="61"></line><line x1="0" y1="23" x2="760" y2="23"></line></g>
+          <polygon points="523,38 585,33 647,27 709,20 709,54 647,51 585,49 523,54" fill="rgba(145,132,217,.20)"></polygon>
+          <g fill="#5d5294">
+            <rect x="12" y="74" width="30" height="101" rx="2"></rect><rect x="74" y="64" width="30" height="111" rx="2"></rect><rect x="136" y="59" width="30" height="116" rx="2"></rect><rect x="198" y="54" width="30" height="121" rx="2"></rect><rect x="260" y="61" width="30" height="114" rx="2"></rect><rect x="322" y="51" width="30" height="124" rx="2"></rect><rect x="384" y="43" width="30" height="132" rx="2"></rect><rect x="446" y="46" width="30" height="129" rx="2"></rect>
+          </g>
+          <g fill="none" stroke="#9184d9" stroke-width="1.3" stroke-dasharray="3 3">
+            <rect x="508.5" y="46.5" width="29" height="128" rx="2"></rect><rect x="570.5" y="41.5" width="29" height="133" rx="2"></rect><rect x="632.5" y="35.5" width="29" height="139" rx="2"></rect><rect x="694.5" y="28.5" width="29" height="146" rx="2"></rect>
+          </g>
+          <line x1="0" y1="49" x2="760" y2="49" stroke="rgba(233,233,237,.4)" stroke-dasharray="4 4"></line>
+          <line x1="497" y1="10" x2="497" y2="185" stroke="rgba(233,233,237,.28)"></line>
+          <text x="503" y="19" fill="rgba(233,233,237,.45)" font-size="10.5" font-family="Inter,sans-serif">{{ t.today }}</text>
+          <g fill="rgba(233,233,237,.5)" font-size="11" font-family="Inter,sans-serif" text-anchor="middle">
+            <text x="27" y="195">{{ mo.0 }}</text><text x="89" y="195">{{ mo.1 }}</text><text x="151" y="195">{{ mo.2 }}</text><text x="213" y="195">{{ mo.3 }}</text><text x="275" y="195">{{ mo.4 }}</text><text x="337" y="195">{{ mo.5 }}</text><text x="399" y="195">{{ mo.6 }}</text><text x="461" y="195">{{ mo.7 }}</text>
+            <text x="523" y="195" fill="rgba(145,132,217,.85)">{{ mo.8 }}</text><text x="585" y="195" fill="rgba(145,132,217,.85)">{{ mo.9 }}</text><text x="647" y="195" fill="rgba(145,132,217,.85)">{{ mo.10 }}</text><text x="709" y="195" fill="rgba(145,132,217,.85)">{{ mo.11 }}</text>
+          </g>
+        </svg>
+        <p style="margin:6px 0 0;font-size:11px;color:rgba(233,233,237,.45)">{{ t.modelNote }}</p>
+      </div>
+
+      <div class="pnl" style="display:flex;flex-direction:column;gap:12px">
+        <div>
+          <h4 style="margin:0;font-size:16px">{{ t.foreMinTitle }}</h4>
+          <div style="font-size:11.5px;color:rgba(233,233,237,.5);margin-top:2px">{{ t.foreMinHint }}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <sc-for list="{{ foreMin }}" as="f" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center">
+              <span style="font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f.name }}</span>
+              <span class="num mut" style="font-size:12px">{{ f.proj }}</span>
+              <span class="tag {{ f.tag }}" style="font-size:10.5px">{{ f.delta }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <section style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;align-items:start">
+      <div style="padding:16px 4px 8px;border-radius:8px;background:#232532;box-shadow:0 0 0 1px #3f424d">
+        <div style="padding:0 14px">
+          <h4 style="margin:0;font-size:16px">{{ t.surpriseTitle }}</h4>
+          <div style="font-size:11.5px;color:rgba(233,233,237,.5);margin-top:2px">{{ t.surpriseHint }}</div>
+        </div>
+        <table class="table" style="font-size:13px;margin-top:6px">
+          <thead><tr><th style="padding-left:14px">{{ t.thEvent }}</th><th>{{ t.thWhen }}</th><th style="text-align:right">{{ t.thCost }}</th><th style="width:130px">{{ t.thRepeat }}</th><th style="text-align:right;padding-right:14px">{{ t.thAdded }}</th></tr></thead>
+          <tbody>
+            <sc-for list="{{ surprises }}" as="s" hint-placeholder-count="5">
+              <tr>
+                <td style="padding-left:14px">{{ s.name }}</td>
+                <td class="mut" style="font-size:12px">{{ s.when }}</td>
+                <td class="num" style="text-align:right">{{ s.cost }}</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div class="bar" style="flex:1;height:4px"><div style="width:{{ s.chance }};height:100%;background:#9184d9"></div></div>
+                    <span class="num" style="width:32px;font-size:11px;color:rgba(233,233,237,.6)">{{ s.chance }}</span>
+                  </div>
+                </td>
+                <td class="num" style="text-align:right;padding-right:14px;color:#d2cefd">{{ s.added }}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="pnl" style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <h4 style="margin:0;font-size:16px">{{ t.attachTitle }}</h4>
+            <span class="tag tag-neutral" style="margin-left:auto">{{ fileCount }}</span>
+          </div>
+          <label style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:18px 14px;border-radius:8px;border:1px dashed rgba(145,132,217,.5);background:rgba(145,132,217,.06);cursor:pointer;text-align:center" style-hover="background:rgba(145,132,217,.12)">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#9184d9" stroke-width="1.6"><path d="M12 16V4"></path><path d="M7.5 8.5 12 4l4.5 4.5"></path><path d="M4 16v3h16v-3"></path></svg>
+            <span style="font-size:13px;color:#d2cefd">{{ t.attachDrop }}</span>
+            <span style="font-size:11px;color:rgba(233,233,237,.5)">{{ t.attachTypes }}</span>
+            <input type="file" multiple="{{ true }}" onChange="{{ onFiles }}" style="display:none"></input>
+          </label>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ files }}" as="f" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:6px;background:rgba(233,233,237,.04)">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="rgba(233,233,237,.55)" stroke-width="1.6" style="flex:none"><path d="M14 3H7v18h10V7l-3-4z"></path><path d="M14 3v4h3"></path></svg>
+                <div style="min-width:0;flex:1">
+                  <div style="font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f.name }}</div>
+                  <div style="font-size:10.5px;color:rgba(233,233,237,.45)">{{ f.meta }}</div>
+                </div>
+                <span class="tag {{ f.tag }}" style="font-size:10px;flex:none">{{ f.state }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div class="pnl" style="display:flex;flex-direction:column;gap:10px">
+          <h4 style="margin:0;font-size:16px">{{ t.askTitle }}</h4>
+          <div style="display:flex;gap:8px">
+            <input class="input" placeholder="{{ t.askPlaceholder }}"></input>
+            <button class="btn btn-primary" style="flex:none">{{ t.askSend }}</button>
+          </div>
+          <div style="padding:11px 12px;border-radius:6px;background:rgba(145,132,217,.08);box-shadow:inset 0 0 0 1px rgba(145,132,217,.22)">
+            <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#9184d9;margin-bottom:5px">{{ t.askAnswerLabel }}</div>
+            <div style="font-size:12.5px;line-height:1.55;color:rgba(233,233,237,.8)">{{ t.askAnswer }}</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+</sc-if>
+
+<!-- ══════════ A · MINISTRY DETAIL ══════════ -->
+<sc-if value="{{ aDetail }}" hint-placeholder-val="{{ false }}">
+<div style="padding:66px 30px 40px;max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:18px">
+  <button onClick="{{ back }}" class="btn btn-ghost" style="align-self:flex-start;padding-left:0">← {{ t.allMinistries }}</button>
+
+  <header style="display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap">
+    <div>
+      <div style="font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:rgba(233,233,237,.5)">{{ detailKicker }}</div>
+      <h2 style="margin:5px 0 0;font-size:31px">{{ m.name }}</h2>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:26px;align-items:flex-end">
+      <div><div class="klbl">{{ t.thAlloc }}</div><div style="font:500 22px/1.2 Inter,sans-serif">{{ m.allocBn }}</div></div>
+      <div><div class="klbl">{{ t.thSpent }}</div><div style="font:500 22px/1.2 Inter,sans-serif">{{ m.spentBn }}</div></div>
+      <div><div class="klbl">{{ t.used }}</div><div style="font:500 22px/1.2 Inter,sans-serif;color:#b5abfc">{{ m.pct }}</div></div>
+    </div>
+  </header>
+
+  <div style="height:1px;background:linear-gradient(to right,transparent,rgba(233,233,237,.16) 48px,rgba(233,233,237,.16) calc(100% - 48px),transparent)"></div>
+
+  <section style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+      <div style="padding:16px 4px 8px;border-radius:8px;background:#232532;box-shadow:0 0 0 1px #3f424d">
+        <h4 style="margin:0 0 4px;padding:0 14px;font-size:16px">{{ t.progTitle }}</h4>
+        <table class="table" style="font-size:13px">
+          <thead><tr><th style="padding-left:14px">{{ t.thProgram }}</th><th style="text-align:right">{{ t.thAlloc }}</th><th style="text-align:right">{{ t.thSpent }}</th><th style="width:140px">{{ t.thProgress }}</th><th style="padding-right:14px">{{ t.thNote }}</th></tr></thead>
+          <tbody>
+            <sc-for list="{{ m.programs }}" as="p" hint-placeholder-count="4">
+              <tr>
+                <td style="padding-left:14px">{{ p.name }}</td>
+                <td class="num" style="text-align:right">{{ p.alloc }}</td>
+                <td class="num" style="text-align:right">{{ p.spent }}</td>
+                <td><div style="display:flex;align-items:center;gap:8px"><div class="bar" style="flex:1"><div style="width:{{ p.pct }};height:100%;background:#9184d9"></div></div><span class="num" style="width:38px;font-size:11.5px;color:rgba(233,233,237,.6)">{{ p.pct }}</span></div></td>
+                <td style="padding-right:14px;font-size:11.5px;color:rgba(233,233,237,.55)">{{ p.note }}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pnl" style="padding-bottom:10px">
+        <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:10px">
+          <h4 style="margin:0;font-size:16px">{{ t.monthByMonth }}</h4>
+          <span style="margin-left:auto;font-size:11px;color:rgba(233,233,237,.55)">{{ t.monthHint }}</span>
+        </div>
+        <svg viewBox="0 0 700 180" style="width:100%;height:auto">
+          <g stroke="rgba(233,233,237,.08)"><line x1="0" y1="150" x2="700" y2="150"></line><line x1="0" y1="110" x2="700" y2="110"></line><line x1="0" y1="70" x2="700" y2="70"></line><line x1="0" y1="30" x2="700" y2="30"></line></g>
+          <g fill="#5d5294">
+            <rect x="24" y="66" width="34" height="84" rx="2"></rect><rect x="108" y="52" width="34" height="98" rx="2"></rect><rect x="192" y="60" width="34" height="90" rx="2"></rect><rect x="276" y="44" width="34" height="106" rx="2"></rect><rect x="360" y="58" width="34" height="92" rx="2"></rect><rect x="444" y="38" width="34" height="112" rx="2"></rect><rect x="528" y="30" width="34" height="120" rx="2"></rect><rect x="612" y="47" width="34" height="103" rx="2"></rect>
+          </g>
+          <line x1="0" y1="58" x2="700" y2="58" stroke="rgba(233,233,237,.45)" stroke-dasharray="4 4"></line>
+          <g fill="rgba(233,233,237,.5)" font-size="11" font-family="Inter,sans-serif" text-anchor="middle"><text x="41" y="170">{{ mo.0 }}</text><text x="125" y="170">{{ mo.1 }}</text><text x="209" y="170">{{ mo.2 }}</text><text x="293" y="170">{{ mo.3 }}</text><text x="377" y="170">{{ mo.4 }}</text><text x="461" y="170">{{ mo.5 }}</text><text x="545" y="170">{{ mo.6 }}</text><text x="629" y="170">{{ mo.7 }}</text></g>
+        </svg>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="pnl" style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#9184d9">{{ t.paceCheck }}</div>
+        <div style="font:500 17px/1.3 Inter,sans-serif">{{ m.headline }}</div>
+        <p style="margin:0;font-size:12.5px;color:rgba(233,233,237,.6)">{{ m.note }}</p>
+      </div>
+      <div class="pnl" style="display:flex;flex-direction:column;gap:12px">
+        <h5 style="margin:0;font-size:14px">{{ t.spendOnTitle }}</h5>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px"><span style="width:9px;height:9px;border-radius:2px;background:#9184d9"></span>{{ t.salaries }}<span class="mut" style="margin-left:auto">{{ m.split1 }}</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px"><span style="width:9px;height:9px;border-radius:2px;background:#796cbf"></span>{{ t.goods }}<span class="mut" style="margin-left:auto">{{ m.split2 }}</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px"><span style="width:9px;height:9px;border-radius:2px;background:#5d5294"></span>{{ t.capital }}<span class="mut" style="margin-left:auto">{{ m.split3 }}</span></div>
+        </div>
+        <div style="display:flex;height:8px;border-radius:4px;overflow:hidden">
+          <div style="width:{{ m.split1 }};background:#9184d9"></div><div style="width:{{ m.split2 }};background:#796cbf"></div><div style="width:{{ m.split3 }};background:#5d5294"></div>
+        </div>
+      </div>
+      <div class="pnl" style="display:flex;flex-direction:column;gap:8px">
+        <h5 style="margin:0;font-size:14px">{{ t.nextSteps }}</h5>
+        <button class="btn btn-primary btn-block">{{ t.reqTransfer }}</button>
+        <button class="btn btn-secondary btn-block">{{ t.openLedger }}</button>
+      </div>
+    </div>
+  </section>
+</div>
+</sc-if>
+
+<!-- ══════════ B · OVERVIEW ══════════ -->
+<sc-if value="{{ bOverview }}" hint-placeholder-val="{{ false }}">
+<div>
+  <div style="padding:70px 60px 0;display:flex;align-items:center;gap:14px">
+    <div style="width:32px;height:32px;border-radius:8px;background:#262a60;box-shadow:inset 0 0 0 1px #4c5397;display:grid;place-items:center;font:600 12px Inter,sans-serif;color:#d2cefd">KK</div>
+    <div style="font:500 14px Inter,sans-serif">{{ t.brand }}</div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:18px;font-size:13px;color:rgba(233,233,237,.6)">
+      <span style="color:#9184d9">{{ t.bNav1 }}</span>
+      <span onClick="{{ goExec }}" style="cursor:pointer">{{ t.bNav2 }}</span>
+      <span>{{ t.bNav3 }}</span><span>{{ t.bNav4 }}</span><span>{{ t.bNav5 }}</span>
+      <button class="btn btn-secondary">{{ asOf }}</button>
+    </div>
+  </div>
+
+  <section style="padding:52px 60px 40px;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:60px;align-items:end">
+    <div>
+      <div style="font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:#9184d9">{{ bKicker }}</div>
+      <h1 style="margin:14px 0 0;font-size:60px;line-height:1.03;max-width:16ch;text-wrap:pretty">{{ t.bHead }}</h1>
+      <p style="margin:20px 0 0;font-size:16px;line-height:1.6;max-width:58ch;color:rgba(233,233,237,.72)">{{ t.bLede }}</p>
+      <div style="display:flex;gap:10px;margin-top:26px">
+        <button class="btn btn-primary">{{ t.bCta1 }}</button>
+        <button class="btn btn-secondary">{{ t.bCta2 }}</button>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div><div style="font-size:11.5px" class="mut">{{ t.bStat1 }}</div><div style="font:500 34px/1.1 Inter,sans-serif">92.4 <span style="font-size:15px" class="mut">{{ t.bn }}</span></div></div>
+      <div style="height:1px;background:linear-gradient(to right,rgba(233,233,237,.16),transparent)"></div>
+      <div><div style="font-size:11.5px" class="mut">{{ t.bStat2 }}</div><div style="font:500 34px/1.1 Inter,sans-serif">58.1 <span style="font-size:15px" class="mut">{{ t.bn }}</span></div></div>
+      <div style="height:1px;background:linear-gradient(to right,rgba(233,233,237,.16),transparent)"></div>
+      <div><div style="font-size:11.5px" class="mut">{{ t.bStat3 }}</div><div style="font:500 34px/1.1 Inter,sans-serif">51.3 <span style="font-size:15px" class="mut">{{ t.bn }}</span></div></div>
+    </div>
+  </section>
+
+  <section style="background:#262a60;padding:34px 60px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:34px">
+    <div><div style="font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#b5abfc">{{ t.bandDef }}</div><div style="font:500 32px/1.15 Inter,sans-serif;margin-top:7px">6.8 {{ t.bn }}</div><div style="font-size:12px;color:rgba(233,233,237,.65);margin-top:4px">{{ t.bandDefSub }}</div></div>
+    <div><div style="font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#b5abfc">{{ t.bandDebt }}</div><div style="font:500 32px/1.15 Inter,sans-serif;margin-top:7px">41.6 {{ t.bn }}</div><div style="font-size:12px;color:rgba(233,233,237,.65);margin-top:4px">{{ t.bandDebtSub }}</div></div>
+    <div><div style="font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#b5abfc">{{ t.bandCash }}</div><div style="font:500 32px/1.15 Inter,sans-serif;margin-top:7px">4.9 {{ t.bn }}</div><div style="font-size:12px;color:rgba(233,233,237,.65);margin-top:4px">{{ t.bandCashSub }}</div></div>
+    <div><div style="font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#b5abfc">{{ t.bandInf }}</div><div style="font:500 32px/1.15 Inter,sans-serif;margin-top:7px">21.4%</div><div style="font-size:12px;color:rgba(233,233,237,.65);margin-top:4px">{{ t.bandInfSub }}</div></div>
+  </section>
+
+  <section style="padding:46px 60px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:start">
+    <div>
+      <h3 style="margin:0 0 6px;font-size:24px">{{ t.bPaceTitle }}</h3>
+      <p style="margin:0 0 18px;font-size:13.5px;color:rgba(233,233,237,.6)">{{ t.bPaceLede }}</p>
+      <div style="display:flex;flex-direction:column">
+        <sc-for list="{{ ministries }}" as="m" hint-placeholder-count="9">
+          <div class="drow" onClick="{{ m.open }}" style="cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) 58px 190px;align-items:center;gap:14px;padding:11px 4px;border-bottom:1px solid rgba(233,233,237,.09)">
+            <span style="font-size:14px">{{ m.name }}</span>
+            <span class="num mut" style="font-size:12.5px;text-align:right">{{ m.pct }}</span>
+            <div style="position:relative;height:7px;border-radius:4px;background:rgba(233,233,237,.09);overflow:hidden">
+              <div style="width:{{ m.pct }};height:100%;background:{{ m.color }}"></div>
+              <div style="position:absolute;left:66.7%;top:-3px;width:1px;height:13px;background:rgba(233,233,237,.5)"></div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:30px">
+      <div>
+        <h3 style="margin:0 0 6px;font-size:24px">{{ t.bRevTitle }}</h3>
+        <p style="margin:0 0 18px;font-size:13.5px;color:rgba(233,233,237,.6)">{{ t.bRevLede }}</p>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <sc-for list="{{ revenue }}" as="r" hint-placeholder-count="5">
+            <div>
+              <div style="display:flex;align-items:baseline;gap:10px;font-size:14px"><span>{{ r.name }}</span><span class="mut" style="margin-left:auto;font-size:12.5px">{{ r.pair }}</span></div>
+              <div style="height:7px;border-radius:4px;background:rgba(233,233,237,.09);overflow:hidden;margin-top:6px"><div style="width:{{ r.pct }};height:100%;background:{{ r.color }}"></div></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div class="pnl" style="padding:18px 20px">
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#9184d9;margin-bottom:8px">{{ t.bAttn }}</div>
+        <div style="font:500 17px/1.35 Inter,sans-serif">{{ t.bAttnTitle }}</div>
+        <p style="margin:8px 0 0;font-size:13px;color:rgba(233,233,237,.62)">{{ t.bAttnBody }}</p>
+      </div>
+    </div>
+  </section>
+</div>
+</sc-if>
+
+<!-- ══════════ B · MINISTRY DETAIL ══════════ -->
+<sc-if value="{{ bDetail }}" hint-placeholder-val="{{ false }}">
+<div style="padding:66px 60px 60px">
+  <button onClick="{{ back }}" class="btn btn-ghost" style="padding-left:0">← {{ t.bBack }}</button>
+  <div style="margin-top:26px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:56px;align-items:end">
+    <div>
+      <div style="font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:#9184d9">{{ detailKicker }}</div>
+      <h1 style="margin:12px 0 0;font-size:48px;line-height:1.06;max-width:20ch">{{ m.name }}</h1>
+      <p style="margin:16px 0 0;font-size:16px;line-height:1.6;max-width:56ch;color:rgba(233,233,237,.72)">{{ m.brief }}</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div><div style="font-size:11.5px" class="mut">{{ t.thAlloc }}</div><div style="font:500 30px/1.1 Inter,sans-serif">{{ m.allocBn }}</div></div>
+      <div style="height:1px;background:linear-gradient(to right,rgba(233,233,237,.16),transparent)"></div>
+      <div><div style="font-size:11.5px" class="mut">{{ m.spentLabel }}</div><div style="font:500 30px/1.1 Inter,sans-serif">{{ m.spentBn }}</div></div>
+    </div>
+  </div>
+
+  <div style="height:1px;margin:36px 0 30px;background:linear-gradient(to right,transparent,rgba(233,233,237,.16) 48px,rgba(233,233,237,.16) calc(100% - 48px),transparent)"></div>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:56px;align-items:start">
+    <div>
+      <h3 style="margin:0 0 16px;font-size:22px">{{ t.bProgrammes }}</h3>
+      <div style="display:flex;flex-direction:column">
+        <sc-for list="{{ m.programs }}" as="p" hint-placeholder-count="4">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) 160px 190px;gap:16px;align-items:center;padding:14px 2px;border-bottom:1px solid rgba(233,233,237,.09)">
+            <div><div style="font-size:15px">{{ p.name }}</div><div style="font-size:12px;color:rgba(233,233,237,.5);margin-top:2px">{{ p.note }}</div></div>
+            <div class="num mut" style="font-size:13px">{{ p.pair }}</div>
+            <div style="display:flex;align-items:center;gap:10px"><div style="flex:1;height:7px;border-radius:4px;background:rgba(233,233,237,.09);overflow:hidden"><div style="width:{{ p.pct }};height:100%;background:#9184d9"></div></div><span class="num" style="width:40px;font-size:12px;color:rgba(233,233,237,.6)">{{ p.pct }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div>
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#9184d9;margin-bottom:10px">{{ t.bMix }}</div>
+        <div style="display:flex;height:9px;border-radius:5px;overflow:hidden"><div style="width:{{ m.split1 }};background:#9184d9"></div><div style="width:{{ m.split2 }};background:#796cbf"></div><div style="width:{{ m.split3 }};background:#5d5294"></div></div>
+        <div style="display:flex;flex-direction:column;gap:7px;margin-top:12px;font-size:12.5px;color:rgba(233,233,237,.7)">
+          <div style="display:flex;gap:8px;align-items:center"><span style="width:9px;height:9px;border-radius:2px;background:#9184d9"></span>{{ t.salaries }}<span style="margin-left:auto">{{ m.split1 }}</span></div>
+          <div style="display:flex;gap:8px;align-items:center"><span style="width:9px;height:9px;border-radius:2px;background:#796cbf"></span>{{ t.goods }}<span style="margin-left:auto">{{ m.split2 }}</span></div>
+          <div style="display:flex;gap:8px;align-items:center"><span style="width:9px;height:9px;border-radius:2px;background:#5d5294"></span>{{ t.capital }}<span style="margin-left:auto">{{ m.split3 }}</span></div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block">{{ t.reqTransfer }}</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;fiscalYear&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;2026&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;asOf&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;31 August 2026&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const MIN = [
+  { alloc: "18.9", spent: "12.6", pct: "66.7%", color: "#9184d9", tag: "tag-neutral", split1: "72%", split2: "19%", split3: "9%",
+    en: { name: "Education & Culture", pace: "On pace", headline: "Spending is right on an even pace.", note: "Two thirds of the year, two thirds of the money — nothing to act on before the autumn review.",
+      programs: [["Primary & secondary schools","11.4","7.8","68.4%","Teacher payroll"],["Higher education support","3.6","2.4","66.7%","Scholarships"],["School buildings & repairs","2.3","1.2","52.2%","Summer works late"],["Culture & sport","1.6","1.2","75.0%","Festival season front-loaded"]] },
+    tr: { name: "Eğitim ve Kültür", pace: "Hedefte", headline: "Harcama tam eşit hızda gidiyor.", note: "Yılın üçte ikisi, paranın üçte ikisi — sonbahar değerlendirmesine kadar işlem gerekmiyor.",
+      programs: [["İlk ve orta öğretim","11.4","7.8","68.4%","Öğretmen maaşları"],["Yükseköğretim desteği","3.6","2.4","66.7%","Burslar"],["Okul yapım ve onarımı","2.3","1.2","52.2%","Yaz işleri gecikti"],["Kültür ve spor","1.6","1.2","75.0%","Festival sezonu öne alındı"]] } },
+  { alloc: "14.2", spent: "10.1", pct: "71.1%", color: "#b5abfc", tag: "tag-accent", split1: "58%", split2: "33%", split3: "9%",
+    en: { name: "Health", pace: "Running hot", headline: "Ahead of pace — the line runs out in November.", note: "Overtime and imported medicine prices are the two drivers; a supplementary appropriation will most likely be needed.",
+      programs: [["Hospitals & clinics","8.1","6.0","74.1%","Overtime above budget"],["Medicines & supplies","3.4","2.6","76.5%","Currency-driven price rises"],["Public health & prevention","1.5","0.9","60.0%","On track"],["Equipment","1.2","0.6","50.0%","Two tenders pending"]] },
+    tr: { name: "Sağlık", pace: "Hızlı gidiyor", headline: "Hızın önünde — ödenek Kasım'da tükeniyor.", note: "İki neden var: fazla mesai ve ithal ilaç fiyatları. Ek ödenek gerekmesi büyük olasılık.",
+      programs: [["Hastane ve klinikler","8.1","6.0","74.1%","Fazla mesai bütçe üstü"],["İlaç ve sarf malzemesi","3.4","2.6","76.5%","Kur kaynaklı fiyat artışı"],["Halk sağlığı ve korunma","1.5","0.9","60.0%","Planda"],["Tıbbi cihaz","1.2","0.6","50.0%","İki ihale bekliyor"]] } },
+  { alloc: "21.1", spent: "14.9", pct: "70.6%", color: "#9184d9", tag: "tag-neutral", split1: "6%", split2: "8%", split3: "86%",
+    en: { name: "Finance (debt service & transfers)", pace: "As scheduled", headline: "Following the payment calendar.", note: "The next instalment of 1.6 bn ₺ falls due on 14 September and is fully covered by cash on hand.",
+      programs: [["Debt service","9.4","6.9","73.4%","Per calendar"],["Social security transfers","8.2","5.8","70.7%","Monthly"],["Local authority grants","2.4","1.6","66.7%","On pace"],["Administration","1.1","0.6","54.5%","Underspent"]] },
+    tr: { name: "Maliye (borç servisi ve transferler)", pace: "Takvimde", headline: "Ödeme takvimine uygun gidiyor.", note: "Sıradaki 1,6 mlyr ₺ taksit 14 Eylül'de ödenecek ve mevcut nakitle tamamen karşılanıyor.",
+      programs: [["Borç servisi","9.4","6.9","73.4%","Takvime göre"],["Sosyal güvenlik transferleri","8.2","5.8","70.7%","Aylık"],["Yerel yönetim yardımları","2.4","1.6","66.7%","Hedefte"],["İdari giderler","1.1","0.6","54.5%","Eksik harcama"]] } },
+  { alloc: "11.4", spent: "5.2", pct: "45.6%", color: "#b5abfc", tag: "tag-accent", split1: "21%", split2: "17%", split3: "62%",
+    en: { name: "Public Works & Transport", pace: "Behind", headline: "Far behind plan, and it is mostly one tender.", note: "The Girne ring road award has slipped twice. If it is not signed by October, about 2.1 bn ₺ will not be spent this year.",
+      programs: [["Roads & highways","5.8","1.9","32.8%","Girne ring road unawarded"],["Water & sewerage","2.6","1.6","61.5%","On pace"],["Ports & airport","1.8","1.1","61.1%","Ercan apron works"],["Fleet & maintenance","1.2","0.6","50.0%","Slow procurement"]] },
+    tr: { name: "Bayındırlık ve Ulaştırma", pace: "Geride", headline: "Plandan çok geride ve neden büyük ölçüde tek bir ihale.", note: "Girne çevre yolu ihalesi iki kez ertelendi. Ekim'e kadar imzalanmazsa yaklaşık 2,1 mlyr ₺ bu yıl harcanmayacak.",
+      programs: [["Yollar ve karayolları","5.8","1.9","32.8%","Girne çevre yolu ihalesiz"],["Su ve kanalizasyon","2.6","1.6","61.5%","Hedefte"],["Limanlar ve havalimanı","1.8","1.1","61.1%","Ercan apron çalışması"],["Araç filosu ve bakım","1.2","0.6","50.0%","Tedarik yavaş"]] } },
+  { alloc: "7.8", spent: "4.6", pct: "59.0%", color: "#9184d9", tag: "tag-neutral", split1: "76%", split2: "18%", split3: "6%",
+    en: { name: "Interior", pace: "Slightly behind", headline: "A little behind, with no single cause.", note: "Recruitment ran later than planned in three directorates; spending should catch up by December.",
+      programs: [["Police & civil defence","4.4","2.8","63.6%","Payroll"],["Civil registry","1.5","0.8","53.3%","Hiring late"],["Local administration","1.2","0.7","58.3%","On pace"],["Immigration","0.7","0.3","42.9%","System project delayed"]] },
+    tr: { name: "İçişleri", pace: "Hafif geride", headline: "Biraz geride, tek bir neden yok.", note: "Üç müdürlükte alımlar planlanandan geç yapıldı; harcama Aralık'a kadar toparlanacak.",
+      programs: [["Polis ve sivil savunma","4.4","2.8","63.6%","Personel"],["Nüfus ve kayıt","1.5","0.8","53.3%","Alımlar gecikti"],["Yerel yönetim","1.2","0.7","58.3%","Hedefte"],["Muhaceret","0.7","0.3","42.9%","Sistem projesi gecikti"]] } },
+  { alloc: "6.3", spent: "4.1", pct: "65.1%", color: "#9184d9", tag: "tag-neutral", split1: "38%", split2: "22%", split3: "40%",
+    en: { name: "Agriculture & Natural Resources", pace: "On pace", headline: "Close to an even pace.", note: "Drought support was paid earlier than usual, which pulled the first half forward.",
+      programs: [["Farmer support payments","2.7","2.0","74.1%","Drought aid front-loaded"],["Water & irrigation","1.6","0.9","56.3%","Works in summer"],["Veterinary services","1.1","0.7","63.6%","On pace"],["Forestry","0.9","0.5","55.6%","Fire season reserve held"]] },
+    tr: { name: "Tarım ve Doğal Kaynaklar", pace: "Hedefte", headline: "Eşit hıza yakın.", note: "Kuraklık desteği alışılmıştan erken ödendi; bu da ilk yarıyı öne çekti.",
+      programs: [["Çiftçi destek ödemeleri","2.7","2.0","74.1%","Kuraklık desteği öne alındı"],["Su ve sulama","1.6","0.9","56.3%","İşler yazın"],["Veteriner hizmetleri","1.1","0.7","63.6%","Hedefte"],["Ormancılık","0.9","0.5","55.6%","Yangın sezonu için tutuldu"]] } },
+  { alloc: "5.1", spent: "2.8", pct: "54.9%", color: "#9184d9", tag: "tag-neutral", split1: "29%", split2: "24%", split3: "47%",
+    en: { name: "Economy & Energy", pace: "Behind", headline: "Behind pace on the energy programme.", note: "The solar tender closed in July; payments start in the fourth quarter.",
+      programs: [["Electricity subsidy","2.4","1.6","66.7%","Per formula"],["Renewable investment","1.3","0.4","30.8%","Pays out in Q4"],["Industry & SME support","0.9","0.5","55.6%","On pace"],["Trade & standards","0.5","0.3","60.0%","On pace"]] },
+    tr: { name: "Ekonomi ve Enerji", pace: "Geride", headline: "Enerji programında hızın gerisinde.", note: "Güneş enerjisi ihalesi Temmuz'da kapandı; ödemeler dördüncü çeyrekte başlıyor.",
+      programs: [["Elektrik desteği","2.4","1.6","66.7%","Formüle göre"],["Yenilenebilir yatırım","1.3","0.4","30.8%","4. çeyrekte ödenir"],["Sanayi ve KOBİ desteği","0.9","0.5","55.6%","Hedefte"],["Ticaret ve standartlar","0.5","0.3","60.0%","Hedefte"]] } },
+  { alloc: "3.4", spent: "2.2", pct: "64.7%", color: "#9184d9", tag: "tag-neutral", split1: "34%", split2: "41%", split3: "25%",
+    en: { name: "Tourism & Environment", pace: "On pace", headline: "Season spending is where it should be.", note: "Promotion is fully committed for the year; the waste programme still has room.",
+      programs: [["Destination promotion","1.4","1.1","78.6%","Committed for the year"],["Environmental protection","1.0","0.6","60.0%","On pace"],["Waste management","0.6","0.3","50.0%","Contract renegotiated"],["Heritage sites","0.4","0.2","50.0%","Works in autumn"]] },
+    tr: { name: "Turizm ve Çevre", pace: "Hedefte", headline: "Sezon harcaması olması gereken yerde.", note: "Tanıtım bütçesi yıl için tamamen taahhüt edildi; atık programında hâlâ yer var.",
+      programs: [["Destinasyon tanıtımı","1.4","1.1","78.6%","Yıl için taahhüt edildi"],["Çevre koruma","1.0","0.6","60.0%","Hedefte"],["Atık yönetimi","0.6","0.3","50.0%","Sözleşme yenilendi"],["Tarihi alanlar","0.4","0.2","50.0%","İşler sonbaharda"]] } },
+  { alloc: "4.2", spent: "2.6", pct: "61.9%", color: "#9184d9", tag: "tag-neutral", split1: "68%", split2: "24%", split3: "8%",
+    en: { name: "Presidency, Assembly & other", pace: "On pace", headline: "Nothing unusual here.", note: "The combined administrative votes are tracking a little under an even pace.",
+      programs: [["Presidency","1.1","0.7","63.6%","On pace"],["Assembly","1.3","0.8","61.5%","On pace"],["Judiciary","1.2","0.8","66.7%","On pace"],["Audit & ombudsman","0.6","0.3","50.0%","Vacancies"]] },
+    tr: { name: "Cumhurbaşkanlığı, Meclis ve diğer", pace: "Hedefte", headline: "Olağandışı bir şey yok.", note: "Birleşik idari ödenekler eşit hızın biraz altında seyrediyor.",
+      programs: [["Cumhurbaşkanlığı","1.1","0.7","63.6%","Hedefte"],["Meclis","1.3","0.8","61.5%","Hedefte"],["Yargı","1.2","0.8","66.7%","Hedefte"],["Sayıştay ve ombudsman","0.6","0.3","50.0%","Boş kadrolar"]] } }
+];
+
+const REV = [
+  { got: "16.8", target: "24.1", pct: "69.7%", color: "#9184d9", en: "Income & corporate tax", tr: "Gelir ve kurumlar vergisi" },
+  { got: "14.6", target: "21.3", pct: "68.5%", color: "#9184d9", en: "Value added tax", tr: "Katma değer vergisi" },
+  { got: "9.9", target: "15.2", pct: "65.1%", color: "#b5abfc", en: "Customs & excise", tr: "Gümrük ve tüketim vergisi" },
+  { got: "5.2", target: "8.4", pct: "61.9%", color: "#796cbf", en: "Fees, licences & other", tr: "Harç, ruhsat ve diğer" },
+  { got: "4.8", target: "9.6", pct: "50.0%", color: "#5d5294", en: "Türkiye aid & credits", tr: "Türkiye yardım ve kredileri" }
+];
+
+const ALERTS = [
+  { color: "#9184d9", en: ["Public Works is spending far behind plan", "45.6% used against 66.7% expected — mostly the Girne ring road tender, still unawarded."], tr: ["Bayındırlık plandan çok geride harcıyor", "Beklenen %66,7 yerine %45,6 kullanıldı — büyük ölçüde hâlâ ihalesi yapılmayan Girne çevre yolu."] },
+  { color: "#9184d9", en: ["Health overtime is running hot", "71.1% of the year's allocation gone by August; on current pace the line runs out in November."], tr: ["Sağlıkta fazla mesai hızlı artıyor", "Ağustos'a kadar yıllık ödeneğin %71,1'i kullanıldı; bu hızla ödenek Kasım'da tükeniyor."] },
+  { color: "#5d5294", en: ["Customs receipts beat target for a third month", "9.9 bn ₺ collected, 0.7 bn above the August plan."], tr: ["Gümrük tahsilatı üçüncü ay üst üste hedefi aştı", "9,9 mlyr ₺ tahsil edildi, Ağustos planının 0,7 mlyr üzerinde."] },
+  { color: "#5d5294", en: ["Debt service payment due 14 September", "1.6 bn ₺ leaves the account; cash cover stays above the 3 bn floor."], tr: ["14 Eylül'de borç servisi ödemesi var", "Hesaptan 1,6 mlyr ₺ çıkıyor; nakit karşılığı 3 mlyr tabanının üzerinde kalıyor."] }
+];
+
+const SURPRISES = [
+  { cost: "1.9", chance: "72%", added: "1.4", en: ["Drought support to farmers", "Jun 2022, Jul 2024"], tr: ["Çiftçilere kuraklık desteği", "Haz 2022, Tem 2024"] },
+  { cost: "1.2", chance: "64%", added: "0.8", en: ["Imported medicine price shock", "Feb 2024, Mar 2025"], tr: ["İthal ilaç fiyat şoku", "Şub 2024, Mar 2025"] },
+  { cost: "0.9", chance: "48%", added: "0.4", en: ["Storm damage repairs", "Jan 2023, Feb 2025"], tr: ["Fırtına hasarı onarımı", "Oca 2023, Şub 2025"] },
+  { cost: "1.6", chance: "35%", added: "0.6", en: ["Mid-year public wage adjustment", "Aug 2023"], tr: ["Yıl ortası kamu maaş düzenlemesi", "Ağu 2023"] },
+  { cost: "0.7", chance: "29%", added: "0.2", en: ["Electricity fuel cost overrun", "Nov 2024"], tr: ["Elektrik yakıt maliyeti aşımı", "Kas 2024"] }
+];
+
+const FORE = [
+  { i: 1, proj: "14.9", tag: "tag-accent", en: "+0.7 over", tr: "+0,7 aşım" },
+  { i: 3, proj: "9.3", tag: "tag-neutral", en: "−2.1 under", tr: "−2,1 eksik" },
+  { i: 0, proj: "18.8", tag: "tag-neutral", en: "on budget", tr: "bütçede" },
+  { i: 2, proj: "21.2", tag: "tag-neutral", en: "+0.1 over", tr: "+0,1 aşım" },
+  { i: 6, proj: "4.8", tag: "tag-neutral", en: "−0.3 under", tr: "−0,3 eksik" }
+];
+
+const SEED = [
+  { en: ["Treasury monthly ledger — August.xlsx", "2.4 MB · uploaded 1 Sep"], tr: ["Hazine aylık defteri — Ağustos.xlsx", "2,4 MB · 1 Eyl yüklendi"], used: true },
+  { en: ["Ministry commitment register.csv", "780 KB · uploaded 1 Sep"], tr: ["Bakanlık taahhüt kaydı.csv", "780 KB · 1 Eyl yüklendi"], used: true },
+  { en: ["Supplementary appropriation request — Health.pdf", "1.1 MB · uploaded 28 Aug"], tr: ["Ek ödenek talebi — Sağlık.pdf", "1,1 MB · 28 Ağu yüklendi"], used: false }
+];
+
+const T = {
+  en: {
+    dirA: "Control tower", dirB: "Ministerial brief", bn: "bn ₺",
+    brand: "Ministry of Finance", country: "Turkish Republic of Northern Cyprus",
+    navFiscal: "Fiscal position", navOverview: "Overview", navExec: "Budget execution", navRevenue: "Revenue collection",
+    navDebt: "Debt & debt service", navCash: "Treasury cash", navEconomy: "Economy", navMacro: "Macro indicators", navReports: "Reports",
+    dataAsOf: "Data as of", ledgerSync: "Treasury ledger · nightly sync",
+    fyPrefix: "Fiscal year", fySuffix: "consolidated budget", overviewTitle: "Where the budget stands",
+    segYtd: "Year to date", segQuarter: "Quarter", segMonth: "Month", exportBriefing: "Export briefing",
+    kpiSpend: "Spending executed", kpiSpendSub: "62.9% of the 92.4 bn appropriation",
+    kpiRev: "Revenue collected", kpiRevSub: "65.3% of the 78.6 bn target — ahead of plan",
+    kpiDef: "Deficit, year to date", kpiDefSub: "1.4 bn narrower than the same point last year",
+    kpiCash: "Treasury cash on hand", kpiCashSub: "Covers 23 days of average outflow",
+    chartTitle: "Money in, money out", legSpend: "Spending", legRev: "Revenue", legPlan: "Monthly plan",
+    revTitle: "Where revenue comes from", econTitle: "The wider economy",
+    econInf: "Inflation, yearly", econGdp: "GDP growth", econFx: "₺ per US$", econDebt: "Debt to GDP",
+    minTitle: "Spending by ministry", minHint: "Click a ministry to open its detail",
+    thMinistry: "Ministry", thAlloc: "Allocated", thSpent: "Spent", thProgress: "Progress", thPace: "Pace",
+    alertsTitle: "Needs a look", alertsOpen: "4 open",
+    allMinistries: "All ministries", detailPrefix: "Ministry detail · FY", used: "Used",
+    progTitle: "Programmes inside this ministry", thProgram: "Programme", thNote: "Note",
+    monthByMonth: "Month by month", monthHint: "Bars: actual spend · dashed: even monthly pace",
+    paceCheck: "Pace check", spendOnTitle: "What it is spent on",
+    salaries: "Salaries & wages", goods: "Goods & services", capital: "Capital & transfers",
+    nextSteps: "Next steps", reqTransfer: "Request a transfer", openLedger: "Open full ledger",
+    execPrefix: "Budget execution · FY", execBadge: "Forecast model", execTitle: "What we have spent, and what we expect to",
+    segNext: "Next month", seg3: "3 months", segYear: "Year end", rerun: "Re-run model",
+    modelRun: "Model last run", modelHist: "Trained on 7 years of ledger history",
+    cExec: "Executed so far", cNext: "Expected next month", c3: "Expected next 3 months", cYear: "Projected year end",
+    rangeNext: "Range 7.3 – 8.6 bn ₺ · 80% confidence", range3: "Range 22.9 – 26.4 bn ₺ · 80% confidence",
+    yearSub: "99.2% of the appropriation, 0.7 bn unspent",
+    projTitle: "Actual against forecast", projActual: "Actual", projForecast: "Forecast", projBand: "Confidence range", projPace: "Even pace", today: "today",
+    modelNote: "Estimates only. The model projects from seven years of ledger history and does not commit the Treasury.",
+    foreMinTitle: "Forecast by ministry", foreMinHint: "Projected year-end spend against allocation",
+    surpriseTitle: "Surprise expenses the model learned from", surpriseHint: "Past unbudgeted events, and how much of each is priced into this year's forecast",
+    thEvent: "Event", thWhen: "When", thCost: "Cost then", thRepeat: "Chance of repeat", thAdded: "In forecast",
+    attachTitle: "Documents the model reads", attachDrop: "Drop a file here, or click to choose",
+    attachTypes: "Excel, CSV or PDF · up to 25 MB", attachUsed: "In forecast", attachPending: "Reading…",
+    askTitle: "Ask about a line", askPlaceholder: "Will Health run out before December?", askSend: "Ask",
+    askAnswerLabel: "Model answer",
+    askAnswer: "On the current pace Health exhausts its allocation in the second week of November. Adding the drought and medicine-price patterns from past years, the shortfall to year end is about 0.7 bn ₺.",
+    bNav1: "Brief", bNav2: "Execution", bNav3: "Revenue", bNav4: "Debt", bNav5: "Cash",
+    bKickerPrefix: "The fiscal year so far ·",
+    bHead: "Two thirds of the year spent, and the deficit is narrowing.",
+    bLede: "Ministries have used 62.9% of what parliament appropriated, while revenue is running slightly ahead of target. The gap that needs financing is 6.8 bn ₺ — 1.4 bn narrower than the same week last year.",
+    bCta1: "Read the full note", bCta2: "Download tables",
+    bStat1: "Appropriated for the year", bStat2: "Spent to date", bStat3: "Collected to date",
+    bandDef: "Deficit to date", bandDefSub: "Narrowing since April", bandDebt: "Debt stock", bandDebtSub: "44.8% of GDP",
+    bandCash: "Cash on hand", bandCashSub: "23 days of outflow", bandInf: "Inflation", bandInfSub: "Down from 24.9% in January",
+    bPaceTitle: "Which ministries are on pace", bPaceLede: "By August a ministry on an even pace would have used about 66.7%. Pick one to see its programmes.",
+    bRevTitle: "Where the money comes from", bRevLede: "Collected against the full-year target.",
+    bAttn: "Worth the Minister's attention", bAttnTitle: "Public Works has used 45.6% of its money with four months left.",
+    bAttnBody: "The Girne ring road tender is still unawarded. If it slips past October, roughly 2.1 bn ₺ of capital spending will not happen this year.",
+    bBack: "Back to the brief", bProgrammes: "Programmes", bMix: "Spending mix",
+    months: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+    of: "of", filesLabel: "3 files"
+  },
+  tr: {
+    dirA: "Kontrol kulesi", dirB: "Bakan brifingi", bn: "mlyr ₺",
+    brand: "Maliye Bakanlığı", country: "Kuzey Kıbrıs Türk Cumhuriyeti",
+    navFiscal: "Mali durum", navOverview: "Genel görünüm", navExec: "Bütçe gerçekleşmesi", navRevenue: "Gelir tahsilatı",
+    navDebt: "Borç ve borç servisi", navCash: "Hazine nakdi", navEconomy: "Ekonomi", navMacro: "Makro göstergeler", navReports: "Raporlar",
+    dataAsOf: "Veri tarihi", ledgerSync: "Hazine defteri · gecelik eşitleme",
+    fyPrefix: "Mali yıl", fySuffix: "konsolide bütçe", overviewTitle: "Bütçe nerede duruyor",
+    segYtd: "Yıl başından", segQuarter: "Çeyrek", segMonth: "Ay", exportBriefing: "Brifing çıkar",
+    kpiSpend: "Gerçekleşen harcama", kpiSpendSub: "92,4 mlyr ödeneğin %62,9'u",
+    kpiRev: "Tahsil edilen gelir", kpiRevSub: "78,6 mlyr hedefin %65,3'ü — planın önünde",
+    kpiDef: "Yıl başından bu yana açık", kpiDefSub: "Geçen yılın aynı dönemine göre 1,4 mlyr daha az",
+    kpiCash: "Hazinedeki nakit", kpiCashSub: "Ortalama çıkışın 23 gününü karşılıyor",
+    chartTitle: "Giren para, çıkan para", legSpend: "Harcama", legRev: "Gelir", legPlan: "Aylık plan",
+    revTitle: "Gelir nereden geliyor", econTitle: "Genel ekonomi",
+    econInf: "Yıllık enflasyon", econGdp: "Büyüme", econFx: "ABD doları kuru", econDebt: "Borç / GSYİH",
+    minTitle: "Bakanlığa göre harcama", minHint: "Detay için bir bakanlığa tıklayın",
+    thMinistry: "Bakanlık", thAlloc: "Ödenek", thSpent: "Harcanan", thProgress: "İlerleme", thPace: "Hız",
+    alertsTitle: "Bakılması gerekenler", alertsOpen: "4 açık",
+    allMinistries: "Tüm bakanlıklar", detailPrefix: "Bakanlık detayı · MY", used: "Kullanım",
+    progTitle: "Bu bakanlığın programları", thProgram: "Program", thNote: "Not",
+    monthByMonth: "Ay ay", monthHint: "Çubuklar: gerçekleşen · kesikli: eşit aylık hız",
+    paceCheck: "Hız kontrolü", spendOnTitle: "Ne için harcanıyor",
+    salaries: "Personel giderleri", goods: "Mal ve hizmet", capital: "Yatırım ve transfer",
+    nextSteps: "Sonraki adımlar", reqTransfer: "Aktarma talep et", openLedger: "Defteri aç",
+    execPrefix: "Bütçe gerçekleşmesi · MY", execBadge: "Tahmin modeli", execTitle: "Ne harcadık, ne harcamayı bekliyoruz",
+    segNext: "Gelecek ay", seg3: "3 ay", segYear: "Yıl sonu", rerun: "Modeli yenile",
+    modelRun: "Model son çalışma", modelHist: "7 yıllık defter geçmişiyle eğitildi",
+    cExec: "Şu ana kadar gerçekleşen", cNext: "Gelecek ay beklenen", c3: "Gelecek 3 ayda beklenen", cYear: "Yıl sonu projeksiyonu",
+    rangeNext: "Aralık 7,3 – 8,6 mlyr ₺ · %80 güven", range3: "Aralık 22,9 – 26,4 mlyr ₺ · %80 güven",
+    yearSub: "Ödeneğin %99,2'si, 0,7 mlyr harcanmadan kalıyor",
+    projTitle: "Gerçekleşme ve tahmin", projActual: "Gerçekleşen", projForecast: "Tahmin", projBand: "Güven aralığı", projPace: "Eşit hız", today: "bugün",
+    modelNote: "Yalnızca tahmindir. Model yedi yıllık defter geçmişinden projeksiyon yapar ve Hazine'yi bağlamaz.",
+    foreMinTitle: "Bakanlığa göre tahmin", foreMinHint: "Ödeneğe karşı yıl sonu harcama projeksiyonu",
+    surpriseTitle: "Modelin öğrendiği sürpriz harcamalar", surpriseHint: "Geçmiş bütçe dışı olaylar ve bu yılın tahmininde ne kadarının hesaba katıldığı",
+    thEvent: "Olay", thWhen: "Ne zaman", thCost: "O günkü tutar", thRepeat: "Tekrar olasılığı", thAdded: "Tahmine eklenen",
+    attachTitle: "Modelin okuduğu belgeler", attachDrop: "Dosyayı buraya bırakın veya seçmek için tıklayın",
+    attachTypes: "Excel, CSV veya PDF · en çok 25 MB", attachUsed: "Tahminde", attachPending: "Okunuyor…",
+    askTitle: "Bir kaleme sor", askPlaceholder: "Sağlık bütçesi Aralık'tan önce biter mi?", askSend: "Sor",
+    askAnswerLabel: "Model yanıtı",
+    askAnswer: "Mevcut hızla Sağlık ödeneği Kasım'ın ikinci haftasında tükeniyor. Geçmiş yılların kuraklık ve ilaç fiyatı örüntüleri eklendiğinde yıl sonuna kadar açık yaklaşık 0,7 mlyr ₺.",
+    bNav1: "Brifing", bNav2: "Gerçekleşme", bNav3: "Gelir", bNav4: "Borç", bNav5: "Nakit",
+    bKickerPrefix: "Mali yılın bugüne kadarı ·",
+    bHead: "Yılın üçte ikisi harcandı ve açık daralıyor.",
+    bLede: "Bakanlıklar Meclis'in verdiği ödeneğin %62,9'unu kullandı; gelir ise hedefin biraz önünde gidiyor. Finansman gerektiren açık 6,8 mlyr ₺ — geçen yılın aynı haftasına göre 1,4 mlyr daha az.",
+    bCta1: "Notun tamamını oku", bCta2: "Tabloları indir",
+    bStat1: "Yıllık ödenek", bStat2: "Bugüne kadar harcanan", bStat3: "Bugüne kadar tahsil edilen",
+    bandDef: "Bugüne kadar açık", bandDefSub: "Nisan'dan beri daralıyor", bandDebt: "Borç stoku", bandDebtSub: "GSYİH'nin %44,8'i",
+    bandCash: "Mevcut nakit", bandCashSub: "23 günlük çıkış", bandInf: "Enflasyon", bandInfSub: "Ocak'taki %24,9'dan geriledi",
+    bPaceTitle: "Hangi bakanlıklar hedefte", bPaceLede: "Ağustos'ta eşit hızda giden bir bakanlık ödeneğinin yaklaşık %66,7'sini kullanmış olurdu. Programlarını görmek için birini seçin.",
+    bRevTitle: "Para nereden geliyor", bRevLede: "Yıllık hedefe karşı tahsilat.",
+    bAttn: "Bakanın dikkatine", bAttnTitle: "Bayındırlık, dört ay kalmışken parasının %45,6'sını kullandı.",
+    bAttnBody: "Girne çevre yolu ihalesi hâlâ sonuçlanmadı. Ekim'i geçerse yaklaşık 2,1 mlyr ₺ yatırım harcaması bu yıl yapılamayacak.",
+    bBack: "Brifinge dön", bProgrammes: "Programlar", bMix: "Harcama dağılımı",
+    months: ["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"],
+    of: "/", filesLabel: "3 dosya"
+  }
+};
+
+class Component extends DCLogic {
+  state = { dir: "a", screen: "overview", i: 0, lang: "en", added: [] };
+  set(p) { this.setState(p); }
+  onFiles = (e) => {
+    const list = Array.from(e.target.files || []).map(f => ({
+      name: f.name, size: (f.size / 1048576).toFixed(1)
+    }));
+    if (list.length) this.setState(s => ({ added: s.added.concat(list) }));
+  };
+  renderVals() {
+    const { dir, screen, i, lang, added } = this.state;
+    const t = T[lang], a = dir === "a", L = lang;
+    const on = "rgba(145,132,217,.18)", onB = "#9184d9", onF = "#d2cefd";
+    const off = "transparent", offB = "rgba(233,233,237,.16)", offF = "rgba(233,233,237,.7)";
+    const fy = this.props.fiscalYear ?? "2026";
+    const asOf = this.props.asOf ?? (L === "tr" ? "31 Ağustos 2026" : "31 August 2026");
+    const bnOf = (v) => v + " " + t.bn;
+    const mk = (m, idx) => {
+      const l = m[L];
+      return {
+        ...m, name: l.name, pace: l.pace, headline: l.headline, note: l.note,
+        brief: l.headline + " " + l.note,
+        allocBn: bnOf(m.alloc), spentBn: bnOf(m.spent),
+        spentLabel: t.thSpent + " · " + m.pct,
+        programs: l.programs.map(p => ({
+          name: p[0], alloc: p[1], spent: p[2], pct: p[3], note: p[4],
+          pair: p[2] + " / " + p[1] + " " + t.bn
+        })),
+        open: () => this.setState({ screen: "detail", i: idx })
+      };
+    };
+    const seeded = SEED.map(f => ({
+      name: f[L][0], meta: f[L][1],
+      state: f.used ? t.attachUsed : t.attachPending,
+      tag: f.used ? "tag-accent" : "tag-neutral"
+    }));
+    const mine = added.map(f => ({
+      name: f.name, meta: f.size + " MB · " + (L === "tr" ? "şimdi eklendi" : "just added"),
+      state: t.attachPending, tag: "tag-neutral"
+    }));
+    const files = seeded.concat(mine);
+    return {
+      t, mo: t.months, fy, asOf,
+      fyLine: t.fyPrefix + " " + fy + " · " + t.fySuffix,
+      detailKicker: t.detailPrefix + " " + fy,
+      execKicker: t.execPrefix + " " + fy,
+      bKicker: t.bKickerPrefix + " " + fy,
+      modelRunAt: asOf + ", 04:10",
+      aOverview: a && screen === "overview",
+      aExec: a && screen === "exec",
+      aDetail: a && screen === "detail",
+      bOverview: !a && screen === "overview",
+      bDetail: !a && screen === "detail",
+      aBg: a ? on : off, aBorder: a ? onB : offB, aFg: a ? onF : offF,
+      bBg: a ? off : on, bBorder: a ? offB : onB, bFg: a ? offF : onF,
+      enBg: L === "en" ? on : off, enBorder: L === "en" ? onB : offB, enFg: L === "en" ? onF : offF,
+      trBg: L === "tr" ? on : off, trBorder: L === "tr" ? onB : offB, trFg: L === "tr" ? onF : offF,
+      pickA: () => this.set({ dir: "a" }),
+      pickB: () => this.set({ dir: "b", screen: screen === "exec" ? "overview" : screen }),
+      setEn: () => this.set({ lang: "en" }),
+      setTr: () => this.set({ lang: "tr" }),
+      goExec: () => this.set({ dir: "a", screen: "exec" }),
+      back: () => this.set({ screen: "overview" }),
+      m: mk(MIN[i], i),
+      ministries: MIN.map(mk),
+      revenue: REV.map(r => ({ ...r, name: r[L], pair: r.got + " " + t.of + " " + r.target + " " + t.bn })),
+      alerts: ALERTS.map(al => ({ color: al.color, title: al[L][0], body: al[L][1] })),
+      surprises: SURPRISES.map(s => ({ ...s, name: s[L][0], when: s[L][1] })),
+      foreMin: FORE.map(f => ({ name: MIN[f.i][L].name, proj: f.proj + " " + t.bn, delta: f[L], tag: f.tag })),
+      files, fileCount: files.length + (L === "tr" ? " dosya" : " files"),
+      onFiles: this.onFiles
+    };
+  }
+}
+</script>
 </body>
 </html>

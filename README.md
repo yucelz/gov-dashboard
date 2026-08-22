@@ -6,13 +6,11 @@ A static dashboard hosted on GitHub Pages.
 
 ```
 .
-├── index.html            # Entry page (required at repo root for Pages)
-├── assets/
-│   ├── css/style.css
-│   └── js/main.js
-├── data/sample.json      # Static data consumed by the dashboard
-├── .nojekyll             # Serve files as-is (skip Jekyll build)
-├── .github/workflows/pages.yml  # Optional Actions-based deploy
+├── index.html            # MoF Dashboard (Claude Design export)
+├── support.js            # runtime required by the export
+├── _ds/                  # design-system CSS/JS bundle used by index.html
+├── .nojekyll             # required: lets Pages serve the _ds/ folder as-is
+├── .github/workflows/pages.yml  # optional Actions-based deploy
 └── README.md
 ```
 
